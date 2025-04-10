@@ -3,7 +3,10 @@ import { getDetail } from '@/apis/detail';
 import GoodHot from '@/views/Detail/components/DetailHot.vue'
 import { ref, onMounted } from 'vue'
 import { useRoute } from "vue-router";
-import ImageView from '@/components/ImageView/index.vue'
+import { ElMessage } from 'element-plus'
+import { useCartStore } from '@/stores/cartStore';
+
+
 const route = useRoute()
 const goods = ref({})
 const getGoods = async () => {
@@ -14,6 +17,42 @@ const getGoods = async () => {
 onMounted(() => {
     getGoods()
 })
+
+
+const cartStore = useCartStore()
+
+//sku规格被操作时
+const skuObj = ref({})
+const skuChange = (sku) => {
+    console.log('sku变化了', sku);
+    skuObj.value = sku
+}
+
+//count
+const count = ref(1)
+const countChange = (count) => {
+    console.log(count);
+}
+//添加购物车
+const addCart = () => {
+    if (skuObj.value.skuId) {
+        //规格已经选择 触发action
+        cartStore.addCart({
+            id: goods.value.id,
+            name: goods.value.name,
+            picture: goods.value.mainPictures[0],
+            price: goods.value.price,
+            count: count.value,
+            skuId: skuObj.value.skuId,
+            attrsText: skuObj.value.specsText,
+            selected: true
+        })
+    } else {
+        //规格没有选择 提示用户
+        ElMessage.warning('请选择规格')
+    }
+}
+
 </script>
 
 
@@ -38,7 +77,9 @@ onMounted(() => {
                 <div>
                     <div class="goods-info">
                         <div class="media">
-                            <ImageView />
+                            <!-- 图片预览区 -->
+                            <XtxImageView :image-list="goods.mainPictures"/>
+
                             <!-- 统计数量 -->
                             <ul class="goods-sales">
                                 <li>
@@ -63,7 +104,43 @@ onMounted(() => {
                                 </li>
                             </ul>
                         </div>
-                        ...
+                       <div class="spec">
+                            <!-- 商品信息区 -->
+                            <p class="g-name"> 抓绒保暖，毛毛虫儿童鞋 </p>
+                            <p class="g-desc">好穿 </p>
+                            <p class="g-price">
+                                <span>200</span>
+                                <span> 100</span>
+                            </p>
+                            <div class="g-service">
+                                <dl>
+                                    <dt>促销</dt>
+                                    <dd>12月好物放送，App领券购买直降120元</dd>
+                                </dl>
+                                <dl>
+                                    <dt>服务</dt>
+                                    <dd>
+                                        <span>无忧退货</span>
+                                        <span>快速退款</span>
+                                        <span>免费包邮</span>
+                                        <a href="javascript:;">了解详情</a>
+                                    </dd>
+                                </dl>
+                            </div>
+                            <!-- sku组件 -->
+                            <XtxSku :goods="goods" @change="skuChange"/>
+
+                            <!-- 数据组件 -->
+                            <el-input-number :min="1" v-model="count" @change="countChange" />
+                            <!-- 按钮组件 -->
+                            <div>
+                                <el-button size="large" class="btn" @click="addCart">
+                                    加入购物车
+                                </el-button>
+                            </div>
+
+                        </div>
+
                     </div>
                     <div class="goods-footer">
                         <div class="goods-article">

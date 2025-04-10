@@ -14,10 +14,11 @@ onMounted(() => {
 </script>
 
 <template>
-    // 吸顶导航栏组件
-    <LayoutFixed />
-    <LayoutNav />
-    <LayoutHeader />
-    <RouterView />
-    <LayoutFooter />
+    <div>
+        <LayoutFixed />
+        <LayoutNav />
+        <LayoutHeader />
+        <RouterView />
+        <LayoutFooter />
+    </div>
 </template>

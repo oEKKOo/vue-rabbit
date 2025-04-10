@@ -60,8 +60,9 @@ const load = async () => {
     const res = await getSubCategoryAPI(reqData.value)
     goodList.value = [...goodList.value, ...res.data.result.items]
 
-    if (res.data.result.items === 0) {
-        disabled = true
+    // 判断是否还有更多数据
+    if (res.data.result.items.length === 0) {
+        disabled.value = true
     }
 }
 
